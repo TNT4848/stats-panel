@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TNT4848 | SYSTEM PANEL</title>
     <style>
-        body { background: #0d1117; color: #58a6ff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        #panel-container { border: 1px solid #30363d; padding: 40px; border-radius: 10px; background: #161b22; text-align: center; width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: #f0f6fc; margin-bottom: 20px; letter-spacing: 1px; }
+        body { background: #0d1117; color: #58a6ff; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #panel-container { border: 1px solid #30363d; padding: 40px; border-radius: 10px; background: #161b22; text-align: center; width: 350px; }
+        h2 { color: #f0f6fc; margin-bottom: 20px; }
         input { background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; width: 90%; margin-bottom: 20px; border-radius: 5px; outline: none; }
         input:focus { border-color: #58a6ff; }
         button { background: #238636; color: white; border: none; padding: 12px; cursor: pointer; border-radius: 5px; font-weight: bold; width: 100%; transition: 0.2s; }
         button:hover { background: #2ea043; }
         .stat-box { background: #0d1117; border: 1px solid #30363d; padding: 15px; border-radius: 5px; margin-top: 15px; }
-        .stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; }
         .stat-value { font-size: 28px; font-weight: bold; color: #39ff14; }
         .error-msg { color: #ff7b72; font-size: 12px; margin-top: 10px; display: none; }
     </style>
@@ -25,7 +25,7 @@
         <h2>SYSTEM AUTH</h2>
         <input type="password" id="adminPass" placeholder="ENTER ADMIN_PASSWORD">
         <button id="authBtn" onclick="fetchStats()">INITIALIZE</button>
-        <div id="errorText" class="error-msg">CANNOT CONNECT TO API</div>
+        <div id="errorText" class="error-msg"></div>
     </div>
 
     <div id="stats-section" style="display:none;">
@@ -51,8 +51,8 @@
         btn.innerText = "CONNECTING...";
         errorMsg.style.display = "none";
 
-        // !!! CHANGE THE URL BELOW TO YOUR ACTUAL RENDER URL !!!
-        const RENDER_URL = "https://bbb-api.onrender.com"; 
+        // URL hard-coded for your jdji service
+        const RENDER_URL = "https://bbb-api-jdji.onrender.com"; 
 
         try {
             const response = await fetch(`${RENDER_URL}/api/stats`, {
@@ -68,17 +68,16 @@
                 document.getElementById('reqCount').innerText = data.requests || 0;
                 document.getElementById('viewCount').innerText = data.pageViews || 0;
             } else {
-                alert("INVALID PASSWORD");
+                const errData = await response.json().catch(() => ({ error: "AUTH FAILED" }));
+                alert(errData.error || "INVALID PASSWORD");
                 btn.innerText = "INITIALIZE";
             }
         } catch (err) {
-            console.error(err);
             btn.innerText = "INITIALIZE";
             errorMsg.style.display = "block";
-            errorMsg.innerText = "API CONNECTION FAILED. WAIT 20S AND RETRY.";
+            errorMsg.innerText = "CONNECTION FAILED. VISIT THE API URL TO WAKE IT UP.";
         }
     }
 </script>
-
 </body>
 </html>
